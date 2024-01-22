@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.utils import check_scalar, check_array
+from sklearn.utils import check_scalar, check_array, check_random_state
 from sklearn.decomposition import FastICA
 
 import os
@@ -19,7 +19,7 @@ class LiNGD:
        in Artificial Intelligence (UAI'08). AUAI Press, Arlington, Virginia, USA, 366–374.
     """
 
-    def __init__(self, k=5):
+    def __init__(self, k=5, random_state=None):
         """ Construct a LiNG-D model.
 
         Parameters
@@ -28,8 +28,11 @@ class LiNGD:
             Number of candidate causal graphs to estimate.
         """
         k = check_scalar(k, "k", int, min_val=1)
+        random_state = check_random_state(random_state)
 
         self._k = k
+        self._random_state = random_state
+
         self._fitted = False
 
     def fit(self, X):
@@ -48,7 +51,7 @@ class LiNGD:
         """
         X = check_array(X)
 
-        ica = FastICA()
+        ica = FastICA(random_state=self._random_state)
         ica.fit_transform(X)
         W_ica = ica.components_
 
